@@ -6,3 +6,21 @@
 
 require '../Euler'
 
+def prob51
+  i = 56003
+  
+end
+
+class Fixnum
+  def largest_digit
+    dup = self
+    max = 0
+    while dup>0
+      max = max < dup%10 ? dup%10 : max
+      dup = (dup - dup % 10)/10
+    end
+    max
+  end
+end
+
+puts 4523.largest_digit

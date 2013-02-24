@@ -1,7 +1,9 @@
+# Have changed some names, old scripts may need to be updated.
+
 require 'mathn'
 PHI = (1+Math.sqrt(5))/2
 
-class Fixnum
+class Integer
   # returns true if number is prime
   def prime?
     if self == 2
@@ -18,13 +20,18 @@ class Fixnum
     end
   end
   
+  # returns whether a number is a perfect cube
+  def cube?
+    (self**(1.0/3.0).floor)**3 == self
+  end
+  
   # returns all permutations of a number
   def permutations
     self.to_s.chars.to_a.permutation.map(&:join).collect{|i| i.to_i}.sort.uniq
   end
   
   # returns whether a number is a pentagonal number
-  def is_pentagonal?
+  def pent_number?
     if Math.sqrt(24*self + 1).floor**2 == 24 * self + 1 && Math.sqrt(24*self + 1)%6 == 5
       return true
     end
@@ -32,7 +39,7 @@ class Fixnum
   end
   
   # returns whether a number is a triangular number
-  def is_triangular?
+  def tri_number?
     Math.sqrt(8 * self + 1).floor**2 == 8 * self + 1
   end
   
@@ -57,7 +64,50 @@ class Fixnum
   
   # returns prime factors
   def prime_factors
-    self.prime_division
+    self.prime_division.map{|p,e| p}
+  end
+  
+  # returns all factors
+  def factors
+    primes, powers = self.prime_division.transpose
+    exponents = powers.map{|i| (0..i).to_a}
+    divisors = exponents.shift.product(*exponents).map do |powers|
+      primes.zip(powers).map{|prime, power| prime ** power}.inject(:*)
+    end
+    divisors.sort
+  end
+  
+  # return number of factors
+  def num_factors
+    factors = 1
+    self.prime_division.each{|p,e| factors *= (e+1)}
+    factors
+  end
+  
+  # returns the sum of number's digits
+  def sum_digits
+    dup = self
+    sum = 0
+    while dup>0
+      sum += dup%10
+      dup = (dup - dup % 10)/10
+    end
+    sum
+  end
+  
+  # returns nCr
+  def comb(r)
+    self.factorial/(r.factorial*(self-r).factorial)
+  end
+    
+  # returns n!
+  def factorial
+    (1..self).inject(:*) || 1
+  end
+  
+  # return array of primes less than n
+  def primes_up_to
+    sieve(self)
   end
   
 end
@@ -90,6 +140,11 @@ class String
     end
     n
   end
+  
+  def permutations
+    self.chars.to_a.permutation.map(&:join)
+  end
+  
 end
 
 def sieve(x)
