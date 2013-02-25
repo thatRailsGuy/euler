@@ -20,6 +20,11 @@ class Integer
     end
   end
   
+  # returns Euler's totient function, phi
+  def totient
+    self * self.prime_factors.each.map { |p| 1 - 1.0 / p }.reduce(1, :*)
+  end
+  
   # returns whether a number is a perfect cube
   def cube?
     (self**(1.0/3.0).floor)**3 == self
